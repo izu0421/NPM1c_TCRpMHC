@@ -177,6 +177,8 @@ for _, r in binders.iterrows():
     atoms = parse_atoms(tid, chain_lengths(r))
     segs = seg_ranges(atoms)
     pdb_text = open(find_pdb(tid)).read()
+    seg_res = {s: sorted(v, key=int) for s, v in segs.items()}
+    targets = {}
     for target in ("peptide", "MHC"):
         ix = find_interactions(atoms, target)
         allbonds = [(k, t) for k in ix for t in ix[k]]
@@ -188,14 +190,14 @@ for _, r in binders.iterrows():
                 "s": [float(x) for x in ta["xyz"]], "e": [float(x) for x in pa["xyz"]],
                 "r": radius, "c": color, "dashed": kind != "disulfide",
             })
-        counts = {k: len(v) for k, v in ix.items()}
-        seg_res = {s: sorted(v, key=int) for s, v in segs.items()}
-        inter_panels.append({
-            "pdb": pdb_text, "target": target, "iface": iface, "bonds": bonds,
-            "seg_res": seg_res,
-            "title": f"{r['tcr_group']} · {r['peptide']} · TCR–{target}",
-            "counts": counts,
-        })
+        targets[target] = {
+            "iface": iface, "bonds": bonds,
+            "counts": {k: len(v) for k, v in ix.items()},
+        }
+    inter_panels.append({
+        "pdb": pdb_text, "seg_res": seg_res, "targets": targets,
+        "title": f"{r['tcr_group']} · {r['peptide']}",
+    })
 
 HTML = """<!DOCTYPE html>
 <html lang="en">
@@ -224,8 +226,14 @@ HTML = """<!DOCTYPE html>
   .cell .cap{font-size:12px;padding:7px 10px;border-bottom:1px solid #eee;background:#f6f8fb}
   .cell .cap small{color:#666}
   .viewer{position:relative;width:100%;height:330px}
-  footer{margin-top:34px;padding-top:14px;border-top:1px solid #e2e2e2;font-size:13px;color:#555}
-  footer a{color:#0d3b66}
+  .toggle{display:flex;gap:6px;padding:7px 10px;border-bottom:1px solid #eee;background:#fff}
+  .toggle button{flex:1;font-size:11.5px;padding:5px 4px;border:1px solid #cfd8e3;background:#fff;
+                 color:#0d3b66;border-radius:5px;cursor:pointer;transition:all .12s}
+  .toggle button:hover{background:#eef3fa}
+  .toggle button.active{background:#0d3b66;color:#fff;border-color:#0d3b66}
+  .availability{background:#eef4fb;border:1px solid #cfe0f2;border-left:5px solid #0d3b66;
+    border-radius:8px;padding:18px 22px;margin:20px 0 8px;font-size:19px;line-height:1.5;color:#123}
+  .availability a{color:#0d3b66;font-weight:600;word-break:break-all}
   @media(max-width:820px){.grid.two,.grid.three{grid-template-columns:1fr}}
 </style>
 </head>
@@ -236,6 +244,11 @@ HTML = """<!DOCTYPE html>
   <p>Predicted TCR:pMHC structures — three confirmed binders vs high-PAE partners. Drag to rotate · scroll to zoom.</p>
 </header>
 <main>
+
+<div class="availability">
+  Data, analysis scripts and predicted structures are available at
+  <a href="https://github.com/izu0421/NPM1c_TCRpMHC" target="_blank" rel="noopener">github.com/izu0421/NPM1c_TCRpMHC</a>
+</div>
 
 <h2>1 · Model confidence (pLDDT)</h2>
 <div class="legend">
@@ -256,13 +269,9 @@ HTML = """<!DOCTYPE html>
   <span class="chip" style="background:#E6C700"></span>H-bond
   <span class="chip" style="background:#FFD000"></span>disulfide
   <span class="chip" style="background:#9E9E9E"></span>hydrophobic
+  <br><span style="color:#555">Use the buttons on each panel to show TCR–peptide, TCR–MHC, or both sets of interactions.</span>
 </div>
 <div class="grid three" id="interGrid"></div>
-
-<footer>
-  Data, analysis scripts and predicted structures are available at
-  <a href="https://github.com/izu0421/NPM1c_TCRpMHC" target="_blank" rel="noopener">github.com/izu0421/NPM1c_TCRpMHC</a>.
-</footer>
 
 </main>
 <script>
@@ -289,26 +298,61 @@ PLDDT.forEach(p=>{
   v.zoomTo(); v.render();
 });
 
-// --- interaction panels
+// --- interaction panels (with TCR-peptide / TCR-MHC / both toggle)
 const ig = document.getElementById('interGrid');
+function fmtCounts(t){
+  const c = t.counts;
+  return 'SB '+c.salt+' · HB '+c.hbond+' · SS '+c.disulfide+' · H\u03a6 '+c.hydrophobic;
+}
 INTER.forEach(p=>{
-  const c = p.counts;
-  const sub = 'SB '+c.salt+' · HB '+c.hbond+' · SS '+c.disulfide+' · H\u03a6 '+c.hydrophobic;
-  const vd = makeCell(ig, p.title, sub);
+  // build cell: caption + toggle buttons + viewer
+  const cell = document.createElement('div'); cell.className='cell';
+  const cap = document.createElement('div'); cap.className='cap';
+  const sub = document.createElement('small');
+  cap.innerHTML = p.title + ' ';
+  cap.appendChild(sub);
+  const bar = document.createElement('div'); bar.className='toggle';
+  const vd = document.createElement('div'); vd.className='viewer';
+  cell.appendChild(cap); cell.appendChild(bar); cell.appendChild(vd);
+  ig.appendChild(cell);
+
   const v = $3Dmol.createViewer(vd,{backgroundColor:'white'});
   v.addModel(p.pdb,'pdb');
-  v.setStyle({},{cartoon:{color:'white'}});
-  for(const seg in p.seg_res){
-    v.setStyle({resi:p.seg_res[seg]},{cartoon:{color:SEG_COLORS[seg]}});
+
+  function draw(mode){  // mode: 'peptide' | 'MHC' | 'both'
+    const shown = mode==='both' ? ['peptide','MHC'] : [mode];
+    v.removeAllShapes();
+    v.setStyle({},{cartoon:{color:'white'}});
+    for(const seg in p.seg_res){
+      v.setStyle({resi:p.seg_res[seg]},{cartoon:{color:SEG_COLORS[seg]}});
+    }
+    let iface=[], bonds=[], counts={salt:0,hbond:0,disulfide:0,hydrophobic:0};
+    shown.forEach(tg=>{
+      const t=p.targets[tg];
+      iface=iface.concat(t.iface); bonds=bonds.concat(t.bonds);
+      for(const k in counts) counts[k]+=t.counts[k];
+    });
+    if(iface.length) v.setStyle({resi:iface},{cartoon:{},stick:{radius:0.15}});
+    bonds.forEach(b=>{
+      v.addCylinder({start:{x:b.s[0],y:b.s[1],z:b.s[2]},end:{x:b.e[0],y:b.e[1],z:b.e[2]},
+        dashed:b.dashed,fromCap:1,toCap:1,radius:b.r,color:b.c});
+    });
+    // zoom on the shown target region(s)
+    let zres=[]; shown.forEach(tg=>{ zres=zres.concat(p.seg_res[tg]||[]); });
+    v.zoomTo(zres.length?{resi:zres}:{});
+    v.render();
+    sub.textContent = fmtCounts({counts});
   }
-  if(p.iface.length){
-    v.setStyle({resi:p.iface},{cartoon:{},stick:{radius:0.15}});
-  }
-  p.bonds.forEach(b=>{
-    v.addCylinder({start:{x:b.s[0],y:b.s[1],z:b.s[2]},end:{x:b.e[0],y:b.e[1],z:b.e[2]},
-      dashed:b.dashed,fromCap:1,toCap:1,radius:b.r,color:b.c});
+
+  const modes=[['peptide','TCR–peptide'],['MHC','TCR–MHC'],['both','Both']];
+  const btns={};
+  modes.forEach(([m,label])=>{
+    const b=document.createElement('button'); b.textContent=label;
+    b.onclick=()=>{ draw(m); for(const k in btns) btns[k].classList.toggle('active',k===m); };
+    bar.appendChild(b); btns[m]=b;
   });
-  v.zoomTo({resi:p.seg_res[p.target]||[]}); v.render();
+  btns.peptide.classList.add('active');
+  draw('peptide');
 });
 </script>
 </body>
