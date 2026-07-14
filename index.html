@@ -33,6 +33,12 @@
   .availability{background:#eef4fb;border:1px solid #cfe0f2;border-left:5px solid #0d3b66;
     border-radius:8px;padding:18px 22px;margin:20px 0 8px;font-size:19px;line-height:1.5;color:#123}
   .availability a{color:#0d3b66;font-weight:600;word-break:break-all}
+  .tablewrap{background:#fff;border:1px solid #e2e2e2;border-radius:8px;overflow:auto;margin-top:12px}
+  table.bonds{border-collapse:collapse;width:100%;font-size:12.5px}
+  table.bonds th,table.bonds td{padding:6px 10px;border-bottom:1px solid #eee;text-align:left;white-space:nowrap}
+  table.bonds thead th{position:sticky;top:0;background:#0d3b66;color:#fff;font-weight:600}
+  table.bonds tbody tr:hover{background:#f6f8fb}
+  .bdot{display:inline-block;width:10px;height:10px;border:1px solid #999;border-radius:2px;margin-right:6px;vertical-align:middle}
   @media(max-width:820px){.grid.two,.grid.three{grid-template-columns:1fr}}
 </style>
 </head>
@@ -71,6 +77,56 @@
   <br><span style="color:#555">Use the buttons on each panel to show TCR–peptide, TCR–MHC, or both sets of interactions.</span>
 </div>
 <div class="grid three" id="interGrid"></div>
+
+<h2>3 · Detected bond list</h2>
+<div class="legend">
+  Every geometrically detected TCR&harr;pMHC bond across the three binders (one row per atom pair).
+  Shorter distances are stronger. Colours match the bond dashes above.
+</div>
+<div class="tablewrap">
+  <table class="bonds">
+    <thead><tr>
+      <th>TCR</th><th>peptide</th><th>interface</th><th>type</th>
+      <th>TCR atom</th><th>pMHC atom</th><th>dist (&#8491;)</th>
+    </tr></thead>
+    <tbody>
+<tr><td>TCR24</td><td>CLAVEEVSL</td><td>TCR-MHC</td><td><span class="bdot" style="background:#E6C700"></span>H-bond</td><td>TCRa:ALA678:N</td><td>MHC:ARG65:NH1</td><td style='text-align:right'>2.69</td></tr>
+<tr><td>TCR24</td><td>CLAVEEVSL</td><td>TCR-MHC</td><td><span class="bdot" style="background:#E6C700"></span>H-bond</td><td>TCRb:ARG947:NH2</td><td>MHC:ALA69:N</td><td style='text-align:right'>3.31</td></tr>
+<tr><td>TCR24</td><td>CLAVEEVSL</td><td>TCR-MHC</td><td><span class="bdot" style="background:#9E9E9E"></span>hydrophobic</td><td>TCRb:PHE942:CE1</td><td>MHC:VAL76:CG2</td><td style='text-align:right'>3.86</td></tr>
+<tr><td>TCR24</td><td>CLAVEEVSL</td><td>TCR-MHC</td><td><span class="bdot" style="background:#E000E0"></span>salt bridge</td><td>TCRa:LYS640:NZ</td><td>MHC:GLU154:OE1</td><td style='text-align:right'>3.78</td></tr>
+<tr><td>TCR24</td><td>CLAVEEVSL</td><td>TCR-peptide</td><td><span class="bdot" style="background:#E6C700"></span>H-bond</td><td>TCRa:GLN615:NE2</td><td>peptide:LEU377:O</td><td style='text-align:right'>3.13</td></tr>
+<tr><td>TCR24</td><td>CLAVEEVSL</td><td>TCR-peptide</td><td><span class="bdot" style="background:#E6C700"></span>H-bond</td><td>TCRa:GLN615:OE1</td><td>peptide:VAL379:N</td><td style='text-align:right'>3.44</td></tr>
+<tr><td>TCR24</td><td>CLAVEEVSL</td><td>TCR-peptide</td><td><span class="bdot" style="background:#E6C700"></span>H-bond</td><td>TCRa:GLN615:NE2</td><td>peptide:VAL379:N</td><td style='text-align:right'>3.47</td></tr>
+<tr><td>TCR24</td><td>CLAVEEVSL</td><td>TCR-peptide</td><td><span class="bdot" style="background:#9E9E9E"></span>hydrophobic</td><td>TCRb:LEU990:CD1</td><td>peptide:VAL379:CG1</td><td style='text-align:right'>2.89</td></tr>
+<tr><td>TCR29</td><td>AIQDLCLAV</td><td>TCR-MHC</td><td><span class="bdot" style="background:#E6C700"></span>H-bond</td><td>TCRa:TYR617:OH</td><td>MHC:GLN155:OE1</td><td style='text-align:right'>2.67</td></tr>
+<tr><td>TCR29</td><td>AIQDLCLAV</td><td>TCR-MHC</td><td><span class="bdot" style="background:#E6C700"></span>H-bond</td><td>TCRa:SER614:OG</td><td>MHC:GLU166:OE2</td><td style='text-align:right'>2.74</td></tr>
+<tr><td>TCR29</td><td>AIQDLCLAV</td><td>TCR-MHC</td><td><span class="bdot" style="background:#E6C700"></span>H-bond</td><td>TCRa:SER614:OG</td><td>MHC:THR163:OG1</td><td style='text-align:right'>2.91</td></tr>
+<tr><td>TCR29</td><td>AIQDLCLAV</td><td>TCR-MHC</td><td><span class="bdot" style="background:#E6C700"></span>H-bond</td><td>TCRb:GLY996:O</td><td>MHC:GLN155:OE1</td><td style='text-align:right'>3.09</td></tr>
+<tr><td>TCR29</td><td>AIQDLCLAV</td><td>TCR-MHC</td><td><span class="bdot" style="background:#E6C700"></span>H-bond</td><td>TCRb:GLY996:O</td><td>MHC:GLN155:NE2</td><td style='text-align:right'>3.17</td></tr>
+<tr><td>TCR29</td><td>AIQDLCLAV</td><td>TCR-MHC</td><td><span class="bdot" style="background:#E6C700"></span>H-bond</td><td>TCRa:SER614:OG</td><td>MHC:THR163:N</td><td style='text-align:right'>3.26</td></tr>
+<tr><td>TCR29</td><td>AIQDLCLAV</td><td>TCR-MHC</td><td><span class="bdot" style="background:#E6C700"></span>H-bond</td><td>TCRa:ASP615:N</td><td>MHC:THR163:OG1</td><td style='text-align:right'>3.48</td></tr>
+<tr><td>TCR29</td><td>AIQDLCLAV</td><td>TCR-MHC</td><td><span class="bdot" style="background:#E000E0"></span>salt bridge</td><td>TCRb:ASP952:OD2</td><td>MHC:ARG65:NE</td><td style='text-align:right'>3.63</td></tr>
+<tr><td>TCR29</td><td>AIQDLCLAV</td><td>TCR-peptide</td><td><span class="bdot" style="background:#E6C700"></span>H-bond</td><td>TCRa:SER682:OG</td><td>peptide:ASP379:OD1</td><td style='text-align:right'>2.36</td></tr>
+<tr><td>TCR29</td><td>AIQDLCLAV</td><td>TCR-peptide</td><td><span class="bdot" style="background:#E6C700"></span>H-bond</td><td>TCRa:SER682:N</td><td>peptide:ASP379:OD2</td><td style='text-align:right'>3.20</td></tr>
+<tr><td>TCR29</td><td>AIQDLCLAV</td><td>TCR-peptide</td><td><span class="bdot" style="background:#E6C700"></span>H-bond</td><td>TCRa:SER682:N</td><td>peptide:ASP379:OD1</td><td style='text-align:right'>3.41</td></tr>
+<tr><td>TCR29</td><td>AIQDLCLAV</td><td>TCR-peptide</td><td><span class="bdot" style="background:#9E9E9E"></span>hydrophobic</td><td>TCRb:PHE998:CZ</td><td>peptide:LEU380:CA</td><td style='text-align:right'>3.94</td></tr>
+<tr><td>TCR5</td><td>AIQDLCLAV</td><td>TCR-MHC</td><td><span class="bdot" style="background:#E6C700"></span>H-bond</td><td>TCRa:ARG612:NH1</td><td>MHC:ARG170:NH1</td><td style='text-align:right'>1.97</td></tr>
+<tr><td>TCR5</td><td>AIQDLCLAV</td><td>TCR-MHC</td><td><span class="bdot" style="background:#E6C700"></span>H-bond</td><td>TCRb:SER992:O</td><td>MHC:GLN155:NE2</td><td style='text-align:right'>2.66</td></tr>
+<tr><td>TCR5</td><td>AIQDLCLAV</td><td>TCR-MHC</td><td><span class="bdot" style="background:#E6C700"></span>H-bond</td><td>TCRa:LYS651:NZ</td><td>MHC:THR163:OG1</td><td style='text-align:right'>2.71</td></tr>
+<tr><td>TCR5</td><td>AIQDLCLAV</td><td>TCR-MHC</td><td><span class="bdot" style="background:#E6C700"></span>H-bond</td><td>TCRa:THR677:O</td><td>MHC:ARG65:NH2</td><td style='text-align:right'>2.97</td></tr>
+<tr><td>TCR5</td><td>AIQDLCLAV</td><td>TCR-MHC</td><td><span class="bdot" style="background:#E6C700"></span>H-bond</td><td>TCRb:GLY993:N</td><td>MHC:GLN155:OE1</td><td style='text-align:right'>3.03</td></tr>
+<tr><td>TCR5</td><td>AIQDLCLAV</td><td>TCR-MHC</td><td><span class="bdot" style="background:#E6C700"></span>H-bond</td><td>TCRa:ASN637:ND2</td><td>MHC:GLU166:OE1</td><td style='text-align:right'>3.04</td></tr>
+<tr><td>TCR5</td><td>AIQDLCLAV</td><td>TCR-MHC</td><td><span class="bdot" style="background:#E6C700"></span>H-bond</td><td>TCRb:SER992:O</td><td>MHC:GLN155:OE1</td><td style='text-align:right'>3.11</td></tr>
+<tr><td>TCR5</td><td>AIQDLCLAV</td><td>TCR-MHC</td><td><span class="bdot" style="background:#E6C700"></span>H-bond</td><td>TCRa:ARG612:NH2</td><td>MHC:ARG170:NH1</td><td style='text-align:right'>3.31</td></tr>
+<tr><td>TCR5</td><td>AIQDLCLAV</td><td>TCR-MHC</td><td><span class="bdot" style="background:#E6C700"></span>H-bond</td><td>TCRa:ARG612:NH1</td><td>MHC:ARG170:NH2</td><td style='text-align:right'>3.46</td></tr>
+<tr><td>TCR5</td><td>AIQDLCLAV</td><td>TCR-MHC</td><td><span class="bdot" style="background:#E6C700"></span>H-bond</td><td>TCRa:GLY678:O</td><td>MHC:ARG65:NE</td><td style='text-align:right'>3.49</td></tr>
+<tr><td>TCR5</td><td>AIQDLCLAV</td><td>TCR-peptide</td><td><span class="bdot" style="background:#E6C700"></span>H-bond</td><td>TCRb:GLU990:O</td><td>peptide:CYS381:O</td><td style='text-align:right'>2.55</td></tr>
+<tr><td>TCR5</td><td>AIQDLCLAV</td><td>TCR-peptide</td><td><span class="bdot" style="background:#E6C700"></span>H-bond</td><td>TCRa:GLN615:NE2</td><td>peptide:ILE377:O</td><td style='text-align:right'>2.67</td></tr>
+<tr><td>TCR5</td><td>AIQDLCLAV</td><td>TCR-peptide</td><td><span class="bdot" style="background:#E6C700"></span>H-bond</td><td>TCRa:GLN615:OE1</td><td>peptide:ASP379:N</td><td style='text-align:right'>3.14</td></tr>
+
+    </tbody>
+  </table>
+</div>
 
 </main>
 <script>
